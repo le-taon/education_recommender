@@ -25,3 +25,15 @@
 	max-width: 300px;
 	margin-bottom: 20px; 
 }
+
+[class*=uk-label] {
+	padding: 5px;
+	text-align: center;
+	border-radius: 3px;
+	text-transform: none;
+	margin: 5px;
+}
+
+.uk-card-footer {
+	align-content: center;
+}
