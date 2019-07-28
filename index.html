@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+
+<head>
+	<!-- Vue.js CDN -->
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+
+	<!-- UIkit CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.1.6/css/uikit.min.css" />
+
+	<!-- UIkit JS -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.1.6/js/uikit.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.1.6/js/uikit-icons.min.js"></script>
+
+	<!-- Custom CSS -->
+	<link rel="stylesheet" type="text/css" href="src/style.css">
+
+</head>
+
+<body>
+	<div id="recommender-app" class="uk-container">
+		<h3>Когда будут занятия</h3>
+		<div class="uk-grid uk-child-width-1-2">
+			<form class="uk-form">
+			    <input type="text" data-uk-datepicker="{format:'DD.MM.YYYY'}">
+			</form>
+			<form class="uk-form">
+			    <input type="text" data-uk-datepicker="{format:'DD.MM.YYYY'}">
+			</form>
+		</div>
+		<h3>Предмет</h3>
+
+		<h3>Что нужно выучить</h2>
+		<div class="material-list uk-grid uk-child-width-1-4@m">
+			<material
+				v-for="material in materialList"	
+			    v-bind:key="material.id"
+				v-bind:material="material">
+			</material>
+		</div>
+	</div>
+	<script type="text/javascript">
+		Vue.component('material', {
+			props: ['material'],
+			data: function () {
+				return {
+					imageSource: 'https://uchebnik.mos.ru/' + this.material.cover
+				}
+			},
+			computed: {
+				link: function () {
+					return `https://uchebnik.mos.ru/catalogue/material_view/lesson_templates/${ this.material.material_id }`
+				},
+				total_votes: function () {
+					let votes = this.material.user_votes;
+					let total_votes = 0;
+
+					for (prop in votes) {
+						total_votes += votes[prop];
+					}
+
+					return total_votes;
+				}
+			},
+			template: `
+				<div> 
+					<a class="uk-link-toggle" v-bind:href="link">
+						<div class="uk-card uk-card-default uk-card-hover uk-card-small material-card"> 
+							<div class="uk-card-media-top card-image"> 
+								<img v-bind:src="imageSource"> 
+								</div> 
+							<div class="uk-card-body"> 
+								<h3 class="uk-card-title uk-link-heading">{{ material.name }}</h3> 
+								<p>{{material.description }}</p> 
+							</div> 
+						</div>
+					</a> 
+				</div>
+				`
+			}
+		)
+
+
+
+		fetch('http://digitalhack.bakhuss.ru/materials?pageSize=7&page=132')
+			.then(
+				function(response) {
+				    return response.json();
+			})
+			.then(
+				function (materials) {
+					materials = materials.sort((a, b) => {
+							if (a.average_rating > b.average_rating) {
+								return -1;
+							} else if (a.average_rating == b.average_rating) {
+								return 0;
+							} else {
+								return 1;
+							}
+						}
+					)
+
+					vm = new Vue({
+						el: '#recommender-app',
+						data: {
+							materialList: materials
+						}
+					})
+				}
+			)
+		
+	</script>
+</body>
