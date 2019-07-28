@@ -14,21 +14,44 @@
 	<!-- Custom CSS -->
 	<link rel="stylesheet" type="text/css" href="src/style.css">
 
+	<!-- JQuery JS -->
+	<script
+	    src="https://code.jquery.com/jquery-3.4.1.min.js"
+	    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+	    crossorigin="anonymous">
+	</script>
+
 </head>
 
 <body>
 	<div id="recommender-app" class="uk-container">
-		<h3>Когда будут занятия</h3>
 		<div class="uk-grid uk-child-width-1-2">
-			<form class="uk-form">
-			    <input type="text" data-uk-datepicker="{format:'DD.MM.YYYY'}">
-			</form>
-			<form class="uk-form">
-			    <input type="text" data-uk-datepicker="{format:'DD.MM.YYYY'}">
-			</form>
+			<div>	
+				<h3>Когда будут занятия</h3>
+				<div class="uk-grid uk-child-width-1-2">
+					<form class="uk-form">
+					    <input 
+					    	type="text" 
+					    	data-uk-datepicker="{format:'DD.MM.YYYY'}"
+					    	placeholder="С какого числа">
+					</form>
+					<form class="uk-form">
+					    <input 
+					    	type="text" 
+					    	data-uk-datepicker="{format:'DD.MM.YYYY'}"
+					    	placeholder="По какое число">
+					</form>
+				</div>
+			</div>
+			<div>
+				<h3>Предмет</h3>
+				<ul id="my-id" class="uk-subnav uk-subnav-pill">
+				    <li data-uk-filter="phisics" class="uk-active">Физика</li>
+				    <li data-uk-filter="math">Математика</li>
+				</ul>
+			</div>
 		</div>
-		<h3>Предмет</h3>
-
+		
 		<h3>Что нужно выучить</h2>
 		<div class="material-list uk-grid uk-child-width-1-4@m">
 			<material
@@ -48,7 +71,8 @@
 			},
 			computed: {
 				link: function () {
-					return `https://uchebnik.mos.ru/catalogue/material_view/lesson_templates/${ this.material.material_id }`
+					let type_ref = this.material.material_type.replace(/([a-z])([A-Z])/g, '$1_$2'); 
+					return `https://uchebnik.mos.ru/catalogue/material_view/${ type_ref }/${ this.material.material_id }`
 				},
 				total_votes: function () {
 					let votes = this.material.user_votes;
